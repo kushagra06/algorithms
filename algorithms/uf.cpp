@@ -18,52 +18,48 @@ typedef map<string, int> msi;
 //memset(dp_memo, -1, sizeof dp_memo); // usefull to initialize DP memoization table 
 //memset(arr, 0, sizeof arr); //useful to clear array of integers
 
-
-void dfs_visit(vector< list<int> > &adj,vi &vis, int u)
+void init(int parent[], int n)
 {
-    vis[u] = 1;
-    printf("%d ",u);
-    list<int>::iterator i;
-    for(i=adj[u].begin(); i!=adj[u].end(); ++i)
-    {
-        if(vis[*i] != 1)
-            dfs_visit(adj,vis,*i);
-    }
+    REP(i,0,n-1)
+        parent[i] = i;
 }
 
-void dfs(vector< list<int> > &adj, int n, int e)
+int root(int i, int parent[])
 {
-    vi vis(n);
-    for(int i=0;i<n;i++)
-            if(vis[i]==0)
-            dfs_visit(adj,vis,i);
+    while(i != parent[i])
+    {
+        parent[i] = parent[parent[i]]; 
+        i = parent[i];
     }
+    return i;
 }
 
 int main()
 {
-    int n,e,u,v;
+    int n,e;
     scanf("%d%d",&n,&e);
-    vector< list<int> > adj(n);
-    for(int i=0;i<e;i++)
+    int parent[n], sz[n];
+    memset(sz, 1, sizeof(sz));
+    init(parent,n);
+    REP(i,1,e)
     {
+        int u,v;
         scanf("%d%d",&u,&v);
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+        int p = root(u, parent);
+        int q = root(v, parent);
+        if(sz[p] < sz[q])
+        {
+            parent[p] = q;
+            sz[q] += sz[p];
+        }
+        else
+        {
+            parent[q] = p;
+            sz[p] += sz[q];
+        }
     }
-/*    int c = 0;
-    vector< list<int> >::iterator i;
-    for(i=adj.begin();i!=adj.end();++i)
-    {
-        cout << c++ << " ";
-        list<int> li = *i;
-        list<int>::iterator j;
-        for(j=li.begin();j!=li.end();++j)
-            cout << *j << " ";
-        cout << endl;
-    }*/
-
-    dfs(adj, n, e);
-    printf("\n");
+    int x,y;
+    scanf("%d%d",&x,&y);
+    root(x, parent) == root(y, parent) ? printf("Connected\n") : printf("Not Connected\n");
     return 0;
 }

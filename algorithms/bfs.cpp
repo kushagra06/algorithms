@@ -18,52 +18,41 @@ typedef map<string, int> msi;
 //memset(dp_memo, -1, sizeof dp_memo); // usefull to initialize DP memoization table 
 //memset(arr, 0, sizeof arr); //useful to clear array of integers
 
-
-void dfs_visit(vector< list<int> > &adj,vi &vis, int u)
-{
-    vis[u] = 1;
-    printf("%d ",u);
-    list<int>::iterator i;
-    for(i=adj[u].begin(); i!=adj[u].end(); ++i)
-    {
-        if(vis[*i] != 1)
-            dfs_visit(adj,vis,*i);
-    }
-}
-
-void dfs(vector< list<int> > &adj, int n, int e)
+void bfs(vector< list<int> > &adj, int s, int n)
 {
     vi vis(n);
-    for(int i=0;i<n;i++)
-            if(vis[i]==0)
-            dfs_visit(adj,vis,i);
+    queue<int> q;
+    q.push(s);
+    vis[s] = 1;
+    while(!q.empty())
+    {
+        int f = q.front();
+        printf("%d ",f);
+        q.pop();
+        list<int>::iterator i;
+        for(i=adj[f].begin(); i!=adj[f].end(); ++i)
+        {
+            if(vis[*i] != 1)
+            {
+                q.push(*i);
+                vis[*i]=1;
+            }
+        }
     }
 }
-
+       
 int main()
 {
     int n,e,u,v;
     scanf("%d%d",&n,&e);
     vector< list<int> > adj(n);
-    for(int i=0;i<e;i++)
+    for(int i=0; i<e; i++)
     {
         scanf("%d%d",&u,&v);
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
-/*    int c = 0;
-    vector< list<int> >::iterator i;
-    for(i=adj.begin();i!=adj.end();++i)
-    {
-        cout << c++ << " ";
-        list<int> li = *i;
-        list<int>::iterator j;
-        for(j=li.begin();j!=li.end();++j)
-            cout << *j << " ";
-        cout << endl;
-    }*/
-
-    dfs(adj, n, e);
+    bfs(adj,0,n);
     printf("\n");
     return 0;
 }
